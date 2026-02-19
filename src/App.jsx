@@ -1,5 +1,13 @@
+import GlobalStyles from "./styles/GlobalStyles";
+import AppLayout from "./ui/AppLayout";
 function App() {
-  return <h1>Resort Management System</h1>;
+  return (
+    <>
+      <GlobalStyles />
+       <AppLayout />
+      
+    </>
+  );
 }
 
 export default App;
