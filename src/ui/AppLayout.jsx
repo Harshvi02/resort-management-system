@@ -1,5 +1,6 @@
 import styled from "styled-components";
-
+import Sidebar from "./Sidebar";
+import Main from "./Main";
 const StyledAppLayout = styled.div`
   display: grid;
   grid-template-columns: 240px 1fr;
@@ -9,8 +10,8 @@ const StyledAppLayout = styled.div`
 function AppLayout() {
   return (
     <StyledAppLayout>
-      <div>Sidebar</div>
-      <div>Main Content</div>
+      <Sidebar />
+      <Main />
     </StyledAppLayout>
   );
 }
