@@ -1,5 +1,5 @@
 import styled from "styled-components";
-
+import Logo from "./Logo";
 const StyledSidebar = styled.div`
   background-color: #ffffff;
   padding: 20px;
@@ -7,7 +7,10 @@ const StyledSidebar = styled.div`
 `;
 
 function Sidebar() {
-  return <StyledSidebar>Sidebar</StyledSidebar>;
+  return (<StyledSidebar>
+     <Logo />
+  </StyledSidebar>
+  );
 }
 
 export default Sidebar;
