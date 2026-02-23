@@ -6,6 +6,7 @@ const StyledTable = styled.div`
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 `;
+
 const StyledInnerTable = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -21,21 +22,14 @@ const StyledInnerTable = styled.table`
 
 const Th = styled.th`
   text-align: left;
-  padding: 1.2rem;
+  padding: 1.4rem;
   border-bottom: 2px solid #e5e7eb;
   font-weight: 600;
 `;
 
 const Td = styled.td`
-  padding: 1.2rem;
+  padding: 1.4rem;
   border-bottom: 1px solid #e5e7eb;
-`;
-const Tr = styled.tr`
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #f9fafb;
-  }
 `;
 
 function Table({ columns, data, render }) {
@@ -50,16 +44,12 @@ function Table({ columns, data, render }) {
           </tr>
         </thead>
         <tbody>
-  {data.map((item) => (
-    <Tr key={item.id}>{render(item).props.children}</Tr>
-  ))}
-</tbody>
+          {data.map(render)}
+        </tbody>
       </StyledInnerTable>
     </StyledTable>
   );
 }
-  
-
 
 export { Td };
 export default Table;
