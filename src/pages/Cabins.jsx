@@ -1,24 +1,6 @@
 import { useEffect, useState } from "react";
-import styled from "styled-components";
 import { getCabins } from "../services/apiCabins";
-
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-`;
-
-const Th = styled.th`
-  text-align: left;
-  padding: 12px;
-  border-bottom: 2px solid #e5e7eb;
-  font-weight: 600;
-`;
-
-const Td = styled.td`
-  padding: 12px;
-  border-bottom: 1px solid #e5e7eb;
-`;
+import Table, { Td } from "../ui/Table";
 
 function Cabins() {
   const [cabins, setCabins] = useState([]);
@@ -40,26 +22,18 @@ function Cabins() {
     <div>
       <h1>Cabins</h1>
 
-      <Table>
-        <thead>
-          <tr>
-            <Th>Name</Th>
-            <Th>Capacity</Th>
-            <Th>Price</Th>
-            <Th>Discount</Th>
+      <Table
+        columns={["Name", "Capacity", "Price", "Discount"]}
+        data={cabins}
+        render={(cabin) => (
+          <tr key={cabin.id}>
+            <Td>{cabin.name}</Td>
+            <Td>{cabin.maxCapacity}</Td>
+            <Td>₹{cabin.regularPrice}</Td>
+            <Td>{cabin.discount}</Td>
           </tr>
-        </thead>
-        <tbody>
-          {cabins.map((cabin) => (
-            <tr key={cabin.id}>
-              <Td>{cabin.name}</Td>
-              <Td>{cabin.maxCapacity}</Td>
-              <Td>₹{cabin.regularPrice}</Td>
-              <Td>{cabin.discount}</Td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+        )}
+      />
     </div>
   );
 }
