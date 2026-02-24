@@ -8,14 +8,21 @@ const StyledSidebar = styled.aside`
   display: flex;
   flex-direction: column;
   gap: 3.2rem;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
 `;
 
-function Sidebar() {
-  return (<StyledSidebar>
-     <Logo />
-     <MainNav />
-  </StyledSidebar>
+
+function Sidebar({ isOpen }) {
+  return (
+    <StyledSidebar isOpen={isOpen}>
+      <Logo />
+      <MainNav />
+    </StyledSidebar>
   );
 }
-
 export default Sidebar;

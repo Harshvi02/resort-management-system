@@ -3,7 +3,7 @@ import styled from "styled-components";
 const StyledTable = styled.div`
   background-color: #ffffff;
   border-radius: 8px;
-  overflow: hidden;
+  overflow-x: auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 `;
 
