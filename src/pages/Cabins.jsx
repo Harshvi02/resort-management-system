@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { getCabins, createCabin } from "../services/apiCabins";
+import { getCabins, createCabin, deleteCabin } from "../services/apiCabins";
 import Table, { Td } from "../ui/Table";
 
 const Form = styled.form`
@@ -88,7 +88,7 @@ const [formData, setFormData] = useState({
 
   async function handleSubmit(e) {
   e.preventDefault();
-
+  
   if (
     formData.name.trim() === "" ||
     formData.maxCapacity === "" ||
@@ -120,7 +120,12 @@ const [formData, setFormData] = useState({
     discount: "",
     description: "",
   });
-}
+}  
+  async function handleDelete(id) {
+    await deleteCabin(id);
+
+    setCabins((cabins) => cabins.filter((c) => c.id !== id));
+  }
   if (isLoading) return <p>Loading cabins...</p>;
 
   return (
@@ -187,31 +192,49 @@ const [formData, setFormData] = useState({
     <Button type="submit">Save Cabin</Button>
   </Form>
 )}
+
       <Table
-        columns={["Name", "Capacity", "Price", "Discount"]}
+        columns={["Name", "Capacity", "Price", "Discount", ""]}
         data={cabins}
-        render={(cabin) => (
-          <tr key={cabin.id}>
-            <Td>{cabin.name}</Td>
-            <Td>{cabin.maxCapacity}</Td>
-            <Td>₹{cabin.regularPrice}</Td>
-           <Td>
-  {cabin.discount > 0 ? (
-    <span style={{
-      background: "#d1fae5",
-      color: "#065f46",
-      padding: "4px 10px",
-      borderRadius: "999px",
-      fontWeight: "600"
-    }}>
-      ₹{cabin.discount}
-    </span>
-  ) : (
-    "-"
-  )}
-</Td>
-          </tr>
-        )}
+       render={(cabin) => (
+  <tr key={cabin.id}>
+    <Td>{cabin.name}</Td>
+    <Td>{cabin.maxCapacity}</Td>
+    <Td>₹{cabin.regularPrice}</Td>
+    <Td>
+      {cabin.discount > 0 ? (
+        <span
+          style={{
+            background: "#d1fae5",
+            color: "#065f46",
+            padding: "4px 10px",
+            borderRadius: "999px",
+            fontWeight: "600",
+          }}
+        >
+          ₹{cabin.discount}
+        </span>
+      ) : (
+        "-"
+      )}
+    </Td>
+    <Td>
+      <button
+        style={{
+          background: "red",
+          color: "white",
+          border: "none",
+          padding: "4px 10px",
+          borderRadius: "6px",
+          cursor: "pointer",
+        }}
+        onClick={() => handleDelete(cabin.id)}
+      >
+        Delete
+      </button>
+    </Td>
+  </tr>
+)}
       />
     </div>
   );
