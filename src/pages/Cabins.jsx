@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import styled from "styled-components";
 import { getCabins, createCabin, deleteCabin, updateCabin, } from "../services/apiCabins";
 import Table, { Td } from "../ui/Table";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const Form = styled.form`
   background: #ffffff;
@@ -62,8 +63,35 @@ const Button = styled.button`
   }
 `;
 function Cabins() {
-  const [cabins, setCabins] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+ const {
+  data: cabins = [],
+  isLoading,
+  error,
+} = useQuery({
+  queryKey: ["cabins"],
+  queryFn: getCabins,
+});
+  const queryClient = useQueryClient();
+  const createMutation = useMutation({
+  mutationFn: createCabin,
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["cabins"] });
+  },
+});
+
+const updateMutation = useMutation({
+  mutationFn: ({ id, data }) => updateCabin(id, data),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["cabins"] });
+  },
+});
+
+const deleteMutation = useMutation({
+  mutationFn: deleteCabin,
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["cabins"] });
+  },
+});
   const [showForm, setShowForm] = useState(false);
 const [editId, setEditId] = useState(null);
 const [formData, setFormData] = useState({
@@ -75,18 +103,10 @@ const [formData, setFormData] = useState({
 });
   
 
-  useEffect(function () {
-    async function fetchCabins() {
-      const data = await getCabins();
-      setCabins(data);
-      setIsLoading(false);
-    }
-
-    fetchCabins();
-  }, []);
+  
 
 
-  async function handleSubmit(e) {
+  function handleSubmit(e) {
   e.preventDefault();
 
   if (
@@ -103,30 +123,18 @@ const [formData, setFormData] = useState({
     return;
   }
 
-  // 🔥 EDIT MODE
+  const formattedData = {
+    ...formData,
+    maxCapacity: Number(formData.maxCapacity),
+    regularPrice: Number(formData.regularPrice),
+    discount: Number(formData.discount || 0),
+  };
+
   if (editId) {
-    const data = await updateCabin(editId, {
-      ...formData,
-      maxCapacity: Number(formData.maxCapacity),
-      regularPrice: Number(formData.regularPrice),
-      discount: Number(formData.discount || 0),
-    });
-
-    setCabins((cabins) =>
-      cabins.map((c) => (c.id === editId ? data[0] : c))
-    );
-
+    updateMutation.mutate({ id: editId, data: formattedData });
     setEditId(null);
   } else {
-    // 🔥 CREATE MODE
-    const data = await createCabin({
-      ...formData,
-      maxCapacity: Number(formData.maxCapacity),
-      regularPrice: Number(formData.regularPrice),
-      discount: Number(formData.discount || 0),
-    });
-
-    setCabins((cabins) => [...cabins, ...data]);
+    createMutation.mutate(formattedData);
   }
 
   setShowForm(false);
@@ -138,13 +146,12 @@ const [formData, setFormData] = useState({
     discount: "",
     description: "",
   });
-} 
-  async function handleDelete(id) {
-    await deleteCabin(id);
-
-    setCabins((cabins) => cabins.filter((c) => c.id !== id));
-  }
+}
+  function handleDelete(id) {
+  deleteMutation.mutate(id);
+}
   if (isLoading) return <p>Loading cabins...</p>;
+  if (error) return <p>Error loading cabins</p>;
 
   return (
     <div>
