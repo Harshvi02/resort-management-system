@@ -35,3 +35,17 @@ export async function deleteCabin(id) {
     throw new Error("Cabin could not be deleted");
   }
 }
+export async function updateCabin(id, newCabin) {
+  const { data, error } = await supabase
+    .from("cabins")
+    .update(newCabin)
+    .eq("id", id)
+    .select();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Cabin could not be updated");
+  }
+
+  return data;
+}

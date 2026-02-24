@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { getCabins, createCabin, deleteCabin } from "../services/apiCabins";
+import { getCabins, createCabin, deleteCabin, updateCabin, } from "../services/apiCabins";
 import Table, { Td } from "../ui/Table";
 
 const Form = styled.form`
@@ -65,7 +65,7 @@ function Cabins() {
   const [cabins, setCabins] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-
+const [editId, setEditId] = useState(null);
 const [formData, setFormData] = useState({
   name: "",
   maxCapacity: "",
@@ -88,7 +88,7 @@ const [formData, setFormData] = useState({
 
   async function handleSubmit(e) {
   e.preventDefault();
-  
+
   if (
     formData.name.trim() === "" ||
     formData.maxCapacity === "" ||
@@ -97,19 +97,37 @@ const [formData, setFormData] = useState({
     alert("Please fill all required fields");
     return;
   }
+
   if (Number(formData.discount) > Number(formData.regularPrice)) {
-  alert("Discount cannot be greater than price");
-  return;
-}
+    alert("Discount cannot be greater than price");
+    return;
+  }
 
-  const data = await createCabin({
-    ...formData,
-    maxCapacity: Number(formData.maxCapacity),
-    regularPrice: Number(formData.regularPrice),
-    discount: Number(formData.discount || 0),
-  });
+  // 🔥 EDIT MODE
+  if (editId) {
+    const data = await updateCabin(editId, {
+      ...formData,
+      maxCapacity: Number(formData.maxCapacity),
+      regularPrice: Number(formData.regularPrice),
+      discount: Number(formData.discount || 0),
+    });
 
-  setCabins((cabins) => [...cabins, ...data]);
+    setCabins((cabins) =>
+      cabins.map((c) => (c.id === editId ? data[0] : c))
+    );
+
+    setEditId(null);
+  } else {
+    // 🔥 CREATE MODE
+    const data = await createCabin({
+      ...formData,
+      maxCapacity: Number(formData.maxCapacity),
+      regularPrice: Number(formData.regularPrice),
+      discount: Number(formData.discount || 0),
+    });
+
+    setCabins((cabins) => [...cabins, ...data]);
+  }
 
   setShowForm(false);
 
@@ -120,7 +138,7 @@ const [formData, setFormData] = useState({
     discount: "",
     description: "",
   });
-}  
+} 
   async function handleDelete(id) {
     await deleteCabin(id);
 
@@ -131,7 +149,22 @@ const [formData, setFormData] = useState({
   return (
     <div>
       <h1>Cabins</h1>
-     <button onClick={() => setShowForm((s) => !s)}>
+     <button
+  onClick={() => {
+    if (showForm) {
+      // Closing form
+      setEditId(null);
+      setFormData({
+        name: "",
+        maxCapacity: "",
+        regularPrice: "",
+        discount: "",
+        description: "",
+      });
+    }
+    setShowForm((s) => !s);
+  }}
+>
   {showForm ? "Close" : "Add Cabin"}
 </button>
 {showForm && (
@@ -194,7 +227,7 @@ const [formData, setFormData] = useState({
 )}
 
       <Table
-        columns={["Name", "Capacity", "Price", "Discount", ""]}
+        columns={["Name", "Capacity", "Price", "Discount", "", ""]}
         data={cabins}
        render={(cabin) => (
   <tr key={cabin.id}>
@@ -218,6 +251,32 @@ const [formData, setFormData] = useState({
         "-"
       )}
     </Td>
+    <Td>
+  <button
+    style={{
+      background: "#3b82f6",
+      color: "white",
+      border: "none",
+      padding: "4px 10px",
+      borderRadius: "6px",
+      cursor: "pointer",
+    }}
+    onClick={() => {
+      setFormData({
+        name: cabin.name,
+        maxCapacity: cabin.maxCapacity,
+        regularPrice: cabin.regularPrice,
+        discount: cabin.discount,
+        description: cabin.description || "",
+      });
+
+      setEditId(cabin.id);
+      setShowForm(true);
+    }}
+  >
+    Edit
+  </button>
+</Td>
     <Td>
       <button
         style={{
