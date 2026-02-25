@@ -44,8 +44,10 @@ function Table({ columns, data, render }) {
           </tr>
         </thead>
         <tbody>
-          {data.map(render)}
-        </tbody>
+  {data.map((item) =>
+    render(item)
+  )}
+</tbody>
       </StyledInnerTable>
     </StyledTable>
   );
