@@ -38,7 +38,15 @@ import { useDeleteCabin } from "./useDeleteCabin";
             borderRadius: "6px",
             cursor: "pointer",
           }}
-          onClick={() => deleteCabinMutation(cabin.id)}
+         onClick={() => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this cabin?"
+  );
+
+  if (confirmDelete) {
+    deleteCabinMutation.mutate(cabin.id);
+  }
+}}
         >
           Delete
         </button>

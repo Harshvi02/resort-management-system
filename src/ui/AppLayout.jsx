@@ -7,6 +7,7 @@ const StyledAppLayout = styled.div`
   display: grid;
   grid-template-columns: 26rem 1fr;
   min-height: 100vh;
+  overflow: hidden; 
 
   @media (max-width: 768px) {
     display: block;

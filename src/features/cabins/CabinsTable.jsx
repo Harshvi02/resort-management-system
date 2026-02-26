@@ -33,19 +33,29 @@ const { updateCabinMutation } = useUpdateCabin();
   <CreateCabinForm
   key={editingCabin?.id || "new"}
   editingCabin={editingCabin}
+  isWorking={
+    createCabinMutation.isPending ||
+    updateCabinMutation.isPending
+  }
   onSubmitCabin={(data) => {
-    if (editingCabin) {
-      updateCabinMutation({
-        id: editingCabin.id,
-        data,
-      });
-      setEditingCabin(null);
-    } else {
-      createCabinMutation(data);
-    }
-
-    setShowForm(false);
-  }}
+  if (editingCabin) {
+    updateCabinMutation.mutate(
+      { id: editingCabin.id, data },
+      {
+        onSuccess: () => {
+          setEditingCabin(null);
+          setShowForm(false);
+        },
+      }
+    );
+  } else {
+    createCabinMutation.mutate(data, {
+      onSuccess: () => {
+        setShowForm(false);
+      },
+    });
+  }
+}}
 />
 )}
 

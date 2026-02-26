@@ -51,7 +51,7 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-function CreateCabinForm({ onSubmitCabin, editingCabin }) {
+function CreateCabinForm({ onSubmitCabin, editingCabin, isWorking }){
   const [formData, setFormData] = useState(
   editingCabin || {
     name: "",
@@ -131,9 +131,15 @@ function CreateCabinForm({ onSubmitCabin, editingCabin }) {
         />
       </FormRow>
 
-      <Button type="submit">
-        {editingCabin ? "Update Cabin" : "Save Cabin"}
-      </Button>
+      <Button type="submit" disabled={isWorking}>
+  {isWorking
+    ? editingCabin
+      ? "Updating..."
+      : "Saving..."
+    : editingCabin
+    ? "Update Cabin"
+    : "Save Cabin"}
+</Button>
     </Form>
   );
 }

@@ -2,16 +2,27 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Toaster } from "react-hot-toast";
 
 import App from "./App.jsx";
 
-// 🔥 Create client
+
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <App />
+
+      <Toaster
+        position="top-right"
+        gutter={12}
+        toastOptions={{
+          success: { duration: 3000 },
+          error: { duration: 4000 },
+        }}
+      />
+
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </StrictMode>
